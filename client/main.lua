@@ -586,6 +586,10 @@ local function drawLoop()
                     }
 
                     if dui.instance.dictName and dui.instance.txtName then
+                        -- Debug print once every 100 frames to avoid spamming too much but confirm it's drawing
+                        if GetFrameCount() % 100 == 0 then
+                            print("^3[Interact] Drawing DUI Sprite: " .. tostring(dui.instance.dictName) .. "^7")
+                        end
                         DrawSprite(dui.instance.dictName, dui.instance.txtName, 0.0, 0.0, 0.4, 0.4 * aspectRatio, 0.0, 255, 255, 255, 255)
                     else
                         -- Fallback to indicator if DUI sprite names are missing
