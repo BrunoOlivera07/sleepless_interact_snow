@@ -59,11 +59,10 @@ function utils.hasPlayerGotGroup(filter)
     local _type = type(filter)
     for i = 1, #groups do
         local group = groups[i]
+        local data = playerGroups[group]
 
         if _type == 'string' then
-            local data = playerGroups[group]
-
-            if filter == data?.name then
+            if data and filter == data.name then
                 return true
             end
         elseif _type == 'table' then
@@ -71,18 +70,14 @@ function utils.hasPlayerGotGroup(filter)
 
             if tabletype == 'hash' then
                 for name, grade in pairs(filter) do
-                    local data = playerGroups[group]
-
-                    if data?.name == name and grade <= data.grade then
+                    if data and data.name == name and grade <= data.grade then
                         return true
                     end
                 end
             elseif tabletype == 'array' then
                 for j = 1, #filter do
                     local name = filter[j]
-                    local data = playerGroups[group]
-
-                    if data?.name == name then
+                    if data and data.name == name then
                         return true
                     end
                 end

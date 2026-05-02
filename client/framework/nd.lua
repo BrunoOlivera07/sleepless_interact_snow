@@ -1,6 +1,7 @@
 local NDCore = exports["ND_Core"]
 
-local playerGroups = NDCore:getPlayer()?.groups or {}
+local playerData = NDCore:getPlayer()
+local playerGroups = playerData and playerData.groups or {}
 
 RegisterNetEvent("ND:characterLoaded", function(data)
     playerGroups = data.groups
@@ -28,7 +29,7 @@ function utils.hasPlayerGotGroup(filter)
 
         if tabletype == 'hash' then
             for name, grade in pairs(filter) do
-                local playerGrade = playerGroups[name]?.rank
+                local playerGrade = playerGroups[name] and playerGroups[name].rank
 
                 if playerGrade and grade <= playerGrade then
                     return true

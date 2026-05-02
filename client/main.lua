@@ -28,7 +28,7 @@ local r, g, b, a = table.unpack(config.themeColor)
 
 
 RegisterNUICallback('startHoldAnim', function(data, cb)
-    local option = store.current.options?[data[1]]?[data[2]]
+    local option = store.current.options and store.current.options[data[1]] and store.current.options[data[1]][data[2]]
 
     cb('ok')
 
@@ -643,7 +643,7 @@ end
 RegisterNUICallback('select', function(data, cb)
     local currentTime = GetGameTimer()
     if store.current.options and currentTime > (store.cooldownEndTime or 0) then
-        local option = store.current.options?[data[1]]?[data[2]]
+        local option = store.current.options and store.current.options[data[1]] and store.current.options[data[1]][data[2]]
         if option then
             if option.onSelect then
                 if option.canInteract then

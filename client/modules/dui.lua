@@ -10,18 +10,32 @@ function dui.register()
         dui.instance:remove()
     end
 
+    local resourceName = GetCurrentResourceName()
+    print("^2[DUI] Registering DUI for resource: " .. resourceName .. "^7")
+
     dui.instance = lib.dui:new(
         {
-            url = ("nui://%s/web/index.html"):format(cache.resource),
+            url = ("nui://%s/web/index.html"):format(resourceName),
             width = screenW,
             height = screenH,
         }
     )
 
-    while not dui.loaded do Wait(100) end
+    CreateThread(function()
+        local timeout = 0
+        while not dui.loaded and timeout < 100 do
+            Wait(100)
+            timeout = timeout + 1
+        end
 
-    dui.sendMessage('visible', true)
-    dui.sendMessage('setColor', config.themeColor)
+        if dui.loaded then
+            print("^2[DUI] DUI Loaded Successfully^7")
+            dui.sendMessage('visible', true)
+            dui.sendMessage('setColor', config.themeColor)
+        else
+            print("^1[DUI] DUI Load Timeout! Check if web/index.html exists and is valid.^7")
+        end
+    end)
 end
 
 RegisterNuiCallback('load', function(_, cb)
@@ -61,7 +75,7 @@ local IsControlJustPressed = IsControlJustPressed
 local SendDuiMouseWheel = SendDuiMouseWheel
 
 dui.handleDuiControls = function()
-    if not dui.instance?.duiObject then return end
+    if not dui.instance or not dui.instance.duiObject then return end
 
     local input = false
 
