@@ -583,7 +583,7 @@ local function drawLoop()
                     }
 
                     if dui.instance.dictName and dui.instance.txtName then
-                        DrawSprite(dui.instance.dictName, dui.instance.txtName, 0.0, 0.0, 0.42, 0.42 * aspectRatio, 0.0, 255, 255, 255, 255)
+                        DrawSprite(dui.instance.dictName, dui.instance.txtName, 0.0, 0.0, 0.45, 0.45, 0.0, 255, 255, 255, 255)
                     else
                         -- Fallback to indicator if DUI sprite names are missing
                         DrawSprite(config.IndicatorSprite.dict, config.IndicatorSprite.txt, 0.0, 0.0, 0.02, 0.02 * aspectRatio, 0.0, r, g, b, 255)
