@@ -1,7 +1,9 @@
 local store = require 'client.modules.store'
 local config = require 'client.modules.config'
 
-local dui = {}
+local dui = {
+    visible = false
+}
 local screenW, screenH = GetActualScreenResolution()
 local controlsRunning = false
 
@@ -64,15 +66,18 @@ function dui.sendMessage(action, value)
         dui.visible = value
     end
 
-    if action == 'setOptions' and not controlsRunning then
-        controlsRunning = true
-        CreateThread(function()
-            while dui.visible do
-                dui.handleDuiControls()
-                Wait(0)
-            end
-            controlsRunning = false
-        end)
+    if action == 'setOptions' then
+        dui.sendMessage('visible', true)
+        if not controlsRunning then
+            controlsRunning = true
+            CreateThread(function()
+                while dui.visible do
+                    dui.handleDuiControls()
+                    Wait(0)
+                end
+                controlsRunning = false
+            end)
+        end
     end
 end
 
