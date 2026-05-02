@@ -21,6 +21,11 @@ function dui.register()
         }
     )
 
+    print("^3[DUI] Instance created. Dictionary: " .. tostring(dui.instance.dictionary) .. ", Texture: " .. tostring(dui.instance.texture) .. "^7")
+    -- Support both naming conventions just in case
+    dui.instance.dictName = dui.instance.dictionary
+    dui.instance.txtName = dui.instance.texture
+
     CreateThread(function()
         local timeout = 0
         while not dui.loaded and timeout < 100 do
