@@ -21,10 +21,10 @@ function dui.register()
         }
     )
 
-    print("^3[DUI] Instance created. Object structure: " .. json.encode(dui.instance) .. "^7")
-    -- Support common ox_lib DUI property names
-    dui.instance.dictName = dui.instance.dictionary or dui.instance.id or dui.instance.name
-    dui.instance.txtName = dui.instance.texture or dui.instance.id or dui.instance.name
+    -- The ox_lib DUI object already has dictName and txtName. 
+    -- We just need to make sure we don't overwrite them if they already exist.
+    dui.instance.dictName = dui.instance.dictName or dui.instance.dictionary or dui.instance.id
+    dui.instance.txtName = dui.instance.txtName or dui.instance.texture or dui.instance.id
 
     CreateThread(function()
         local timeout = 0
