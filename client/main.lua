@@ -602,13 +602,15 @@ local function drawLoop()
         end
 
         if not foundValid and next(store.current) then
-            for _, opts in pairs(store.current.options) do
-                for j = 1, #opts do
-                    local opt = opts[j]
+            if store.current.options then
+                for _, opts in pairs(store.current.options) do
+                    for j = 1, #opts do
+                        local opt = opts[j]
 
-                    if opt.onInactive and activeOptions[opt] then
-                        pcall(opt.onInactive, utils.getResponse(opt))
-                        activeOptions[opt] = nil
+                        if opt.onInactive and activeOptions[opt] then
+                            pcall(opt.onInactive, utils.getResponse(opt))
+                            activeOptions[opt] = nil
+                        end
                     end
                 end
             end
