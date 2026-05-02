@@ -41,11 +41,14 @@ function dui.sendMessage(action, value)
         value = value
     })
 
+    if action == 'visible' then
+        dui.visible = value
+    end
+
     if action == 'setOptions' and not controlsRunning then
-        if controlsRunning then return end
         controlsRunning = true
         CreateThread(function()
-            while next(store.current) do
+            while dui.visible do
                 dui.handleDuiControls()
                 Wait(0)
             end

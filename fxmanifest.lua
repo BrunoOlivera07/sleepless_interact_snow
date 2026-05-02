@@ -6,6 +6,8 @@ game 'gta5'
 
 version '2.1.3'
 
+ui_page 'web/index.html'
+
 shared_scripts {
 	'@ox_lib/init.lua',
 }
