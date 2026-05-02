@@ -21,10 +21,10 @@ function dui.register()
         }
     )
 
-    print("^3[DUI] Instance created. Dictionary: " .. tostring(dui.instance.dictionary) .. ", Texture: " .. tostring(dui.instance.texture) .. "^7")
-    -- Support both naming conventions just in case
-    dui.instance.dictName = dui.instance.dictionary
-    dui.instance.txtName = dui.instance.texture
+    print("^3[DUI] Instance created. Object structure: " .. json.encode(dui.instance) .. "^7")
+    -- Support common ox_lib DUI property names
+    dui.instance.dictName = dui.instance.dictionary or dui.instance.id or dui.instance.name
+    dui.instance.txtName = dui.instance.texture or dui.instance.id or dui.instance.name
 
     CreateThread(function()
         local timeout = 0
