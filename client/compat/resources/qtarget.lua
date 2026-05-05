@@ -12,7 +12,9 @@ local zoneToCoord = {}
 ---@return table
 local function convert(options)
     local distance = options.distance
-    options = options.options
+    options = options.options or options
+
+    if type(options) ~= 'table' then return {} end
 
     -- People may pass options as a hashmap (or mixed, even)
     for k, v in pairs(options) do

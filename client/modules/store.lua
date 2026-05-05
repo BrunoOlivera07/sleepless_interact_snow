@@ -34,6 +34,7 @@ store.objects = {}
 store.vehicles = {}
 store.players = {}
 store.models = {}
+store.global = {}
 
 store.current = {}
 

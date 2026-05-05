@@ -70,24 +70,16 @@ local function addOptions(target, options, resource, bonesTarget, offsetsTarget)
     for i = #options, 1, -1 do
         local option = options[i]
         option.resource = option.resource or resource
+        
+        -- Normalize ox_target properties
+        if option.action and not option.onSelect then option.onSelect = option.action end
+        if option.item and not option.items then option.items = option.item end
+        
         option.distanceSq = option.distance and option.distance * option.distance or 4.0
 
         if resource == 'sleepless_interact' then
-            if option.canInteract then
-                option.canInteract = msgpack.unpack(msgpack.pack(option.canInteract))
-            end
-            if option.onSelect then
-                option.onSelect = msgpack.unpack(msgpack.pack(option.onSelect))
-            end
-            if option.onActive then
-                option.onActive = msgpack.unpack(msgpack.pack(option.onActive))
-            end
-            if option.onInactive then
-                option.onInactive = msgpack.unpack(msgpack.pack(option.onInactive))
-            end
-            if option.whileActive then
-                option.whileActive = msgpack.unpack(msgpack.pack(option.whileActive))
-            end
+            -- Only deep clone non-functions if needed, but functions must remain as is
+            -- Removing the msgpack trick as it breaks functions
         end
 
         if option.offset or option.offsetAbsolute then
@@ -366,6 +358,19 @@ function interact.removeGlobalPlayer(remove)
     end
 end
 
+--- Adds options globally for all entities (peds, vehicles, objects, players).
+---@param options InteractOption | InteractOption[] A single option or array of options.
+function interact.addGlobalOption(options)
+    addOptions(store.global, options, GetInvokingResource())
+end
+
+--- Removes options globally from all entities.
+---@param remove? string | string[] A single option name or array of names to remove, or nil to remove all for the resource.
+function interact.removeGlobalOption(remove)
+    if not remove then return end
+    removeTarget(store.global, remove, GetInvokingResource())
+end
+
 --- Adds options for specific models.
 ---@param models number | string | (number | string)[] A single model (hash or name) or array of models.
 ---@param options InteractOption | InteractOption[] A single option or array of options.
@@ -566,6 +571,7 @@ AddEventHandler('onClientResourceStop', function(resource)
     removeResourceOptions(store.vehicles, resource)
     removeResourceOptions(store.objects, resource)
     removeResourceOptions(store.players, resource)
+    removeResourceOptions(store.global, resource)
 
     for boneId, options in pairs(store.bones.peds or {}) do
         removeResourceOptions(options, resource)

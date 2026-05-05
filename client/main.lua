@@ -109,15 +109,16 @@ local canInteractPending = {}
 ---@param entity number
 ---@param distance number
 ---@param coords vector3
+---@param bone string | nil
 ---@return boolean|nil -- nil means pending/unknown, use cached or default
-local function getCanInteractCached(option, entity, distance, coords)
+local function getCanInteractCached(option, entity, distance, coords, bone)
     local cacheKey = tostring(option)
     local cached = canInteractCache[cacheKey]
 
     if not canInteractPending[cacheKey] then
         canInteractPending[cacheKey] = true
         CreateThread(function()
-            local success, resp = pcall(option.canInteract, entity, distance, coords, option.name)
+            local success, resp = pcall(option.canInteract, entity, distance, coords, option.name, bone)
             canInteractCache[cacheKey] = {
                 result = success and resp or false
             }
@@ -145,7 +146,7 @@ end
 ---@param distance number
 ---@param coords vector3
 ---@return nil | table<string, InteractOption[]>, number | nil, boolean | nil
-local function filterValidOptions(options, entity, distance, coords)
+local function filterValidOptions(options, entity, distance, coords, bone)
     if not options then return nil end
     local validOptions = {}
     local totalValid = 0
@@ -175,7 +176,7 @@ local function filterValidOptions(options, entity, distance, coords)
             if not hide and option.items then hide = not utils.hasPlayerGotItems(option.items, option.anyItem) end
 
             if not hide and option.canInteract then
-                local result = getCanInteractCached(option, entity, distance, coords)
+                local result = getCanInteractCached(option, entity, distance, coords, bone)
                 hide = not result
             end
 
@@ -222,6 +223,7 @@ local function getOptionsForEntity(entity, globalType)
         entity = (netId and store.entities[netId] ~= nil and #store.entities[netId] > 0 and store.entities[netId]) or nil,
         localEntity = (store.localEntities[entity] ~= nil and #store.localEntities[entity] > 0 and store.localEntities[entity]) or
             nil,
+        all = (store.global ~= nil and #store.global > 0 and store.global) or nil,
     }
 
     return next(options) and options or nil
@@ -480,7 +482,7 @@ local function drawLoop()
                     end
 
                     local distanceSq = utils.getDistanceSquared(playerCoords, coords)
-                    local validOpts, validCount, hideCompletely = filterValidOptions(item.options, item.entity, distanceSq, coords)
+                    local validOpts, validCount, hideCompletely = filterValidOptions(item.options, item.entity, distanceSq, coords, item.bone)
                     local id = item.bone or item.offset or item.entity or item.coordId
                     local shouldUpdate = false
 
@@ -654,7 +656,7 @@ RegisterNUICallback('select', function(data, cb)
         if option then
             if option.onSelect then
                 if option.canInteract then
-                    local success, resp = pcall(option.canInteract, store.current.entity, store.current.distance, store.current.coords, option.name)
+                    local success, resp = pcall(option.canInteract, store.current.entity, store.current.distance, store.current.coords, option.name, store.current.bone)
                     if success and resp then
                         option.onSelect(option.qtarget and store.current.entity or utils.getResponse(option))
                     end

@@ -12,6 +12,10 @@ shared_scripts {
 	'@ox_lib/init.lua',
 }
 
+server_scripts {
+	'server.lua'
+}
+
 client_scripts {
 	'client/compat/init.lua',
 	'init.lua',

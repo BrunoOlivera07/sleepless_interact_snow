@@ -13,7 +13,6 @@ function dui.register()
     end
 
     local resourceName = GetCurrentResourceName()
-    print("^2[DUI] Registering DUI for resource: " .. resourceName .. "^7")
 
     dui.instance = lib.dui:new(
         {
@@ -36,11 +35,10 @@ function dui.register()
         end
 
         if dui.loaded then
-            print("^2[DUI] DUI Loaded Successfully^7")
             dui.sendMessage('visible', true)
             dui.sendMessage('setColor', config.themeColor)
         else
-            print("^1[DUI] DUI Load Timeout! Check if web/index.html exists and is valid.^7")
+            warn("^1[DUI] DUI Load Timeout! Check if web/index.html exists and is valid.^7")
         end
     end)
 end
