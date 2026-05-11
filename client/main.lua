@@ -99,6 +99,30 @@ if config.useShowKeyBind then
     })
 end
 
+local hideManual = false
+lib.addKeybind({
+    name = 'sleepless_interact:manual_hide',
+    description = 'Hide/Show Interactions',
+    defaultKey = 'BACK',
+    onPressed = function(self)
+        hideManual = not hideManual
+        if hideManual then
+            dui.sendMessage('visible', false)
+            lib.notify({
+                title = 'Interação',
+                description = 'Interface oculta',
+                type = 'inform'
+            })
+        else
+            lib.notify({
+                title = 'Interação',
+                description = 'Interface visível',
+                type = 'inform'
+            })
+        end
+    end
+})
+
 local modelCache, netIdCache = {}, {}
 
 -- Async canInteract caching system
@@ -434,7 +458,7 @@ end
 
 
 local function shouldHideInteract()
-    if IsNuiFocused() or LocalPlayer.state.hideInteract or (lib and lib.progressActive()) or hidePerKeybind or LocalPlayer.state.invOpen then
+    if hideManual or IsNuiFocused() or LocalPlayer.state.hideInteract or (lib and lib.progressActive()) or hidePerKeybind or LocalPlayer.state.invOpen then
         return true
     end
     return false
@@ -527,10 +551,23 @@ local function drawLoop()
                     local newClosestId = item.bone or item.offset or item.entity or item.coordId
                     if data.shouldUpdate or lastClosestItem ~= newClosestId or lastValidCount ~= data.validCount then
                         local newOptions = {}
+                        local sanitizedOptions = {}
+                        for category, opts in pairs(data.validOpts) do
+                            sanitizedOptions[category] = {}
+                            for j = 1, #opts do
+                                local opt = opts[j]
+                                sanitizedOptions[category][j] = {
+                                    label = opt.label,
+                                    icon = opt.icon,
+                                    iconColor = opt.iconColor,
+                                    holdProgress = opt.holdProgress, -- If you have it
+                                    category = category,
+                                    originalIndex = j
+                                }
+                            end
+                        end
 
-                        local resetIndex = lastClosestItem ~= newClosestId
-
-                        dui.sendMessage('setOptions', { options = data.validOpts, resetIndex = resetIndex })
+                        dui.sendMessage('setOptions', { options = sanitizedOptions, resetIndex = resetIndex })
 
                         if data.validOpts then
                             for _, opts in pairs(data.validOpts) do
